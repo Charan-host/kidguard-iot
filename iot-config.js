@@ -1,7 +1,7 @@
 ﻿window.KidGuardConfig = (() => {
     const STORAGE_KEY = "kidguard-api-base-url";
     const DEFAULTS = {
-        apiBaseUrl: "http://localhost:3000/api",
+        apiBaseUrl: "https://kidguard-backend.onrender.com/api",
         deviceIdStorageKey: "kidguard-device-id",
         mapFocusStorageKey: "kidguard-map-focus",
         useDemoOnError: true,
