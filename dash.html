@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KidGuard Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="dashboard.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="left">
+        <div class="logo-box" aria-hidden="true">&#128205;</div>
+        <h2>KidGuard</h2>
+    </div>
+
+    <div class="right">
+        <div class="user">
+            <div class="avatar">E</div>
+            <span id="topChildName">Emma Wilson</span>
+        </div>
+
+        <div class="battery" aria-label="Device battery" id="topBattery">&#128267; 85%</div>
+
+        <a class="logout" href="login_page.html" aria-label="Logout">&#9099;</a>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar" aria-label="Dashboard navigation">
+        <a href="dash.html" class="active">Dashboard</a>
+        <a href="dash.html#live-location">Live Map</a>
+        <a href="Alert.html">Alerts</a>
+        <a href="setting.html">Device Settings</a>
+        <a href="History.html">History</a>
+    </aside>
+
+    <main class="content">
+        <div class="page-header">
+            <h1>Live Dashboard</h1>
+            <p>Monitor Emma's location and status in real-time</p>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <h4>Current Location</h4>
+                <h2 id="locationTitle">123 Main St</h2>
+                <p id="locationSub">Springfield, MA</p>
+            </div>
+
+            <div class="card">
+                <h4>Distance from Parent</h4>
+                <h2 id="distanceValue">2.3 km</h2>
+                <p id="distanceSub">Within safe range</p>
+            </div>
+
+            <div class="card">
+                <h4>Status</h4>
+                <h2 class="green" id="statusValue">Safe</h2>
+                <p id="statusSub">Inside safe zone</p>
+            </div>
+
+            <div class="card">
+                <h4>Battery</h4>
+                <h2 id="batteryValue">85%</h2>
+                <p id="batterySub">~3 days remaining</p>
+            </div>
+        </div>
+
+        <div class="map-section" id="live-location">
+            <h2>Live Location</h2>
+
+            <div class="map-box">
+                <iframe
+                    class="google-map"
+                    title="Emma live location map"
+                    id="liveMapFrame"
+                    src="https://www.google.com/maps?q=37.7749,-122.4194&z=14&output=embed"
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    allowfullscreen>
+                </iframe>
+                <div class="map-overlay">
+                    <span class="live-dot"></span>
+                    <span id="liveMapLabel">Live: Emma Wilson</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="activity">
+            <h2>Recent Activity</h2>
+            <div id="recentActivityList">
+                <div class="activity-item">
+                    <span>&#128205; Entered safe zone</span>
+                    <small>2:45 PM</small>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="theme.js"></script>
+<script src="iot-config.js"></script>
+<script src="iot-client.js"></script>
+<script src="dash-iot.js"></script>
+</body>
+</html>
+
+

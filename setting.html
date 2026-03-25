@@ -1,0 +1,260 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Device Settings</title>
+<link rel="stylesheet" href="dashboard.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+.settings-header p { color: #6b7280; margin: 6px 0 22px; }
+.settings-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 16px;
+}
+.settings-card h2 { font-size: 20px; margin-bottom: 16px; }
+.settings-group { margin-bottom: 14px; }
+.settings-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+.settings-group input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    font-family: inherit;
+}
+.radius-slider { width: 100%; margin-top: 8px; }
+.radius-range {
+    display: flex;
+    justify-content: space-between;
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 5px;
+}
+.settings-note {
+    margin-top: 12px;
+    background: #eef4ff;
+    color: #3756cc;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 14px;
+}
+.settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+    gap: 12px;
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-text { font-size: 16px; }
+.settings-text span {
+    display: block;
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 2px;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    flex-shrink: 0;
+}
+.switch input { display: none; }
+.switch-slider {
+    position: absolute;
+    inset: 0;
+    background: #d1d5db;
+    border-radius: 999px;
+    cursor: pointer;
+}
+.switch-slider::before {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 2px;
+    top: 2px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+.switch input:checked + .switch-slider { background: #111827; }
+.switch input:checked + .switch-slider::before { transform: translateX(20px); }
+.settings-actions { margin-top: 18px; }
+.settings-btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #f3f4f6;
+    cursor: pointer;
+    margin-right: 8px;
+    font-family: inherit;
+}
+.settings-btn.primary { background: #2563eb; border-color: #2563eb; color: #fff; }
+#settingsStatus { margin-top: 10px; font-size: 14px; font-weight: 600; }
+@media (max-width: 768px) {
+    .settings-row { align-items: flex-start; }
+}
+
+html.dark-mode .settings-header p,
+html.dark-mode .settings-text span,
+html.dark-mode .radius-range {
+    color: #94a3b8;
+}
+html.dark-mode .settings-card {
+    background: #111827;
+    border-color: #1f2937;
+}
+html.dark-mode .settings-group input[type="text"] {
+    background: #1f2937;
+    border-color: #334155;
+    color: #e5e7eb;
+}
+html.dark-mode .settings-note {
+    background: #1e293b;
+    color: #c7d2fe;
+}
+html.dark-mode .settings-row {
+    border-bottom-color: #1f2937;
+}
+html.dark-mode .switch-slider {
+    background: #475569;
+}
+html.dark-mode .switch input:checked + .switch-slider {
+    background: #2563eb;
+}
+html.dark-mode .settings-btn {
+    background: #1f2937;
+    color: #e5e7eb;
+    border-color: #334155;
+}
+html.dark-mode .settings-btn.primary {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+    <div class="left">
+        <div class="logo-box" aria-hidden="true">&#128205;</div>
+        <h2>KidGuard</h2>
+    </div>
+    <div class="right">
+        <div class="user">
+            <div class="avatar">E</div>
+            <span>Emma Wilson</span>
+        </div>
+        <div class="battery">&#128267; 85%</div>
+        <a class="logout" href="login_page.html" aria-label="Logout">&#9099;</a>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar" aria-label="Dashboard navigation">
+        <a href="dash.html">Dashboard</a>
+        <a href="dash.html#live-location">Live Map</a>
+        <a href="Alert.html">Alerts</a>
+        <a href="setting.html" class="active">Device Settings</a>
+        <a href="History.html">History</a>
+    </aside>
+
+    <main class="content">
+        <div class="settings-header">
+            <h1>Device Settings</h1>
+            <p>Configure your child's smart band preferences</p>
+        </div>
+
+        <div class="settings-card">
+            <h2>Child Information</h2>
+            <div class="settings-group">
+                <label>Child's Name</label>
+                <input type="text" id="childNameInput" value="Emma Wilson">
+            </div>
+            <div class="settings-group">
+                <label>Device ID</label>
+                <input type="text" id="deviceIdInput" value="KB-2024-0123">
+            </div>
+            <div class="settings-group">
+                <label>IoT API Base URL</label>
+                <input type="text" id="apiBaseUrlInput" value="http://localhost:3000/api">
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <h2>Safe Zone Settings</h2>
+            <label>Safe Zone Radius</label>
+            <input class="radius-slider" id="safeZoneRadiusInput" type="range" min="10" max="100" value="100">
+            <div class="radius-range">
+                <span>10m</span>
+                <span>50m</span>
+                <span>100m</span>
+            </div>
+            <div class="settings-note">
+                Note: The safe zone is a circular area around your child's typical locations. You will receive alerts when they enter or leave this zone.
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <h2>Alert Preferences</h2>
+            <div class="settings-row">
+                <div class="settings-text">
+                    SOS Alerts
+                    <span>Receive notifications when SOS button is pressed</span>
+                </div>
+                <label class="switch"><input type="checkbox" id="sosAlertsInput" checked><span class="switch-slider"></span></label>
+            </div>
+            <div class="settings-row">
+                <div class="settings-text">
+                    Geofencing Alerts
+                    <span>Get notified when entering/leaving safe zones</span>
+                </div>
+                <label class="switch"><input type="checkbox" id="geofencingAlertsInput" checked><span class="switch-slider"></span></label>
+            </div>
+            <div class="settings-row">
+                <div class="settings-text">
+                    Battery Alerts
+                    <span>Notifications when battery is running low</span>
+                </div>
+                <label class="switch"><input type="checkbox" id="batteryAlertsInput" checked><span class="switch-slider"></span></label>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <h2>Device Features</h2>
+            <div class="settings-row">
+                <div class="settings-text">
+                    Night Mode
+                    <span>Disable non-essential notifications at night</span>
+                </div>
+                <label class="switch"><input type="checkbox" id="nightModeToggle"><span class="switch-slider"></span></label>
+            </div>
+
+            <div class="settings-actions">
+                <button class="settings-btn primary" id="saveSettingsBtn">Save Settings</button>
+                <button class="settings-btn" id="resetSettingsBtn">Reset to Default</button>
+                <p id="settingsStatus"></p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="theme.js"></script>
+<script src="iot-config.js"></script>
+<script src="iot-client.js"></script>
+<script src="settings-iot.js"></script>
+</body>
+</html>
+
+

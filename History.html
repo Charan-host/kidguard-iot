@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Location History</title>
+<link rel="stylesheet" href="dashboard.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+.history-header p { color: #6b7280; margin: 6px 0 20px; }
+.history-filter {
+    background: #fff;
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 22px;
+}
+.history-filter select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    font-family: inherit;
+}
+.history-timeline {
+    position: relative;
+    padding-left: 34px;
+}
+.history-timeline::before {
+    content: "";
+    position: absolute;
+    left: 11px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #dbe2ee;
+}
+.history-item {
+    position: relative;
+    margin-bottom: 16px;
+}
+.history-item::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2563eb;
+    position: absolute;
+    left: -27px;
+    top: 22px;
+}
+.history-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+.history-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.history-address { color: #4b5563; margin-bottom: 4px; }
+.history-time { color: #6b7280; font-size: 13px; }
+.history-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+}
+@media (max-width: 768px) {
+    .history-card { flex-direction: column; align-items: flex-start; }
+}
+
+html.dark-mode .history-filter,
+html.dark-mode .history-card {
+    background: #111827;
+    border-color: #1f2937;
+}
+html.dark-mode .history-filter select {
+    background: #1f2937;
+    border-color: #334155;
+    color: #e5e7eb;
+}
+html.dark-mode .history-header p,
+html.dark-mode .history-address,
+html.dark-mode .history-time {
+    color: #94a3b8;
+}
+html.dark-mode .history-timeline::before {
+    background: #334155;
+}
+html.dark-mode .history-link {
+    color: #93c5fd;
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+    <div class="left">
+        <div class="logo-box" aria-hidden="true">&#128205;</div>
+        <h2>KidGuard</h2>
+    </div>
+    <div class="right">
+        <div class="user">
+            <div class="avatar">E</div>
+            <span>Emma Wilson</span>
+        </div>
+        <div class="battery">&#128267; 85%</div>
+        <a class="logout" href="login_page.html" aria-label="Logout">&#9099;</a>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar" aria-label="Dashboard navigation">
+        <a href="dash.html">Dashboard</a>
+        <a href="dash.html#live-location">Live Map</a>
+        <a href="Alert.html">Alerts</a>
+        <a href="setting.html">Device Settings</a>
+        <a href="History.html" class="active">History</a>
+    </aside>
+
+    <main class="content">
+        <div class="history-header">
+            <h1>Location History</h1>
+            <p>View your child's location timeline</p>
+        </div>
+
+        <div class="history-filter">
+            <select id="historyRange">
+                <option>Today</option>
+                <option>Yesterday</option>
+                <option>This Week</option>
+            </select>
+        </div>
+
+        <div class="history-timeline" id="historyTimeline">
+            <div class="history-item">
+                <div class="history-card">
+                    <div>
+                        <div class="history-title">Home</div>
+                        <div class="history-address">123 Main Street, Springfield</div>
+                        <div class="history-time">6:30 PM &bull; Today &bull; 3 hours</div>
+                    </div>
+                    <a class="history-link" href="dash.html#live-location">View on Map</a>
+                </div>
+            </div>
+
+            <div class="history-item">
+                <div class="history-card">
+                    <div>
+                        <div class="history-title">School</div>
+                        <div class="history-address">456 Education Ave, Springfield</div>
+                        <div class="history-time">2:45 PM &bull; Today &bull; 6 hours</div>
+                    </div>
+                    <a class="history-link" href="dash.html#live-location">View on Map</a>
+                </div>
+            </div>
+
+            <div class="history-item">
+                <div class="history-card">
+                    <div>
+                        <div class="history-title">Park</div>
+                        <div class="history-address">789 Green Park, Springfield</div>
+                        <div class="history-time">4:15 PM &bull; Yesterday &bull; 1.5 hours</div>
+                    </div>
+                    <a class="history-link" href="dash.html#live-location">View on Map</a>
+                </div>
+            </div>
+
+            <div class="history-item">
+                <div class="history-card">
+                    <div>
+                        <div class="history-title">Friend's House</div>
+                        <div class="history-address">321 Oak Street, Springfield</div>
+                        <div class="history-time">2:00 PM &bull; Yesterday &bull; 2 hours</div>
+                    </div>
+                    <a class="history-link" href="dash.html#live-location">View on Map</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="theme.js"></script>
+<script src="iot-config.js"></script>
+<script src="iot-client.js"></script>
+<script src="history-iot.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alerts Dashboard</title>
+<link rel="stylesheet" href="dashboard.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+.alert-header p { color: #6b7280; margin: 6px 0 20px; }
+.alert-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+.alert-summary {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px;
+}
+.alert-summary h3 { font-size: 14px; color: #6b7280; margin-bottom: 8px; }
+.alert-summary span { font-size: 28px; font-weight: 700; }
+.alert-summary.alert-critical { background: #fff3f3; border-color: #fecaca; }
+.alert-summary.alert-ok { background: #edfdf3; border-color: #bbf7d0; }
+.alert-item {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+.alert-item.is-active { background: #fff5f5; border-color: #fca5a5; }
+.alert-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.alert-info { color: #6b7280; font-size: 14px; }
+.alert-actions { margin-top: 10px; }
+.alert-btn {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    cursor: pointer;
+    margin-right: 8px;
+    font-family: inherit;
+}
+.alert-btn.primary { background: #dc2626; border-color: #dc2626; color: #fff; }
+.alert-status {
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.alert-status.active { background: #ef4444; color: #fff; }
+.alert-status.resolved { background: #6b7280; color: #fff; }
+@media (max-width: 900px) {
+    .alert-cards { grid-template-columns: 1fr; }
+    .alert-item { flex-direction: column; align-items: flex-start; }
+}
+
+html.dark-mode .alert-summary,
+html.dark-mode .alert-item {
+    background: #111827;
+    border-color: #1f2937;
+}
+html.dark-mode .alert-summary h3,
+html.dark-mode .alert-info {
+    color: #94a3b8;
+}
+html.dark-mode .alert-summary.alert-critical,
+html.dark-mode .alert-item.is-active {
+    background: #2b171b;
+    border-color: #7f1d1d;
+}
+html.dark-mode .alert-summary.alert-ok {
+    background: #10261e;
+    border-color: #14532d;
+}
+html.dark-mode .alert-btn {
+    background: #1f2937;
+    color: #e5e7eb;
+    border-color: #334155;
+}
+html.dark-mode .alert-btn.primary {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+    <div class="left">
+        <div class="logo-box" aria-hidden="true">&#128205;</div>
+        <h2>KidGuard</h2>
+    </div>
+    <div class="right">
+        <div class="user">
+            <div class="avatar">E</div>
+            <span>Emma Wilson</span>
+        </div>
+        <div class="battery">&#128267; 85%</div>
+        <a class="logout" href="login_page.html" aria-label="Logout">&#9099;</a>
+    </div>
+</header>
+
+<div class="layout">
+    <aside class="sidebar" aria-label="Dashboard navigation">
+        <a href="dash.html">Dashboard</a>
+        <a href="dash.html#live-location">Live Map</a>
+        <a href="Alert.html" class="active">Alerts</a>
+        <a href="setting.html">Device Settings</a>
+        <a href="History.html">History</a>
+    </aside>
+
+    <main class="content">
+        <div class="alert-header">
+            <h1>Alerts & Notifications</h1>
+            <p>Monitor all safety alerts and notifications</p>
+        </div>
+
+        <div class="alert-cards">
+            <div class="alert-summary alert-critical">
+                <h3>Active Alerts</h3>
+                <span id="activeAlertCount">1</span>
+            </div>
+            <div class="alert-summary">
+                <h3>Total Today</h3>
+                <span id="totalAlertCount">3</span>
+            </div>
+            <div class="alert-summary alert-ok">
+                <h3>Resolved</h3>
+                <span id="resolvedAlertCount">4</span>
+            </div>
+        </div>
+
+        <div id="alertList">
+            <div class="alert-item is-active">
+                <div>
+                    <div class="alert-title">SOS Button Activated</div>
+                    <div class="alert-info">456 Park Avenue, Springfield &bull; 10:45 AM</div>
+                    <div class="alert-actions">
+                        <button class="alert-btn primary">View Location</button>
+                        <button class="alert-btn">Mark as Resolved</button>
+                    </div>
+                </div>
+                <div class="alert-status active">Active</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="theme.js"></script>
+<script src="iot-config.js"></script>
+<script src="iot-client.js"></script>
+<script src="alerts-iot.js"></script>
+</body>
+</html>
+
+
