@@ -109,6 +109,8 @@
         return {
             childName: "Emma Wilson",
             deviceId: getDeviceId(),
+            safeZoneLat: 37.7749,
+            safeZoneLng: -122.4194,
             safeZoneRadius: 100,
             sosAlerts: true,
             geofencingAlerts: true,

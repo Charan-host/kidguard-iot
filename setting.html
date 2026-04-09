@@ -30,6 +30,20 @@
     background: #f9fafb;
     font-family: inherit;
 }
+.settings-link-row {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #4b5563;
+}
+.settings-link-row a {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+    word-break: break-all;
+}
+.settings-link-row a:hover {
+    text-decoration: underline;
+}
 .radius-slider { width: 100%; margin-top: 8px; }
 .radius-range {
     display: flex;
@@ -120,6 +134,12 @@ html.dark-mode .settings-group input[type="text"] {
     border-color: #334155;
     color: #e5e7eb;
 }
+html.dark-mode .settings-link-row {
+    color: #94a3b8;
+}
+html.dark-mode .settings-link-row a {
+    color: #93c5fd;
+}
 html.dark-mode .settings-note {
     background: #1e293b;
     color: #c7d2fe;
@@ -189,11 +209,23 @@ html.dark-mode .settings-btn.primary {
             <div class="settings-group">
                 <label>IoT API Base URL</label>
                 <input type="text" id="apiBaseUrlInput" value="http://localhost:3000/api">
+                <div class="settings-link-row">
+                    IoT Link:
+                    <a id="apiBaseUrlLink" href="http://localhost:3000/api" target="_blank" rel="noopener noreferrer">http://localhost:3000/api</a>
+                </div>
             </div>
         </div>
 
         <div class="settings-card">
             <h2>Safe Zone Settings</h2>
+            <div class="settings-group">
+                <label>Safe Zone Latitude</label>
+                <input type="text" id="safeZoneLatInput" value="37.7749">
+            </div>
+            <div class="settings-group">
+                <label>Safe Zone Longitude</label>
+                <input type="text" id="safeZoneLngInput" value="-122.4194">
+            </div>
             <label>Safe Zone Radius</label>
             <input class="radius-slider" id="safeZoneRadiusInput" type="range" min="10" max="100" value="100">
             <div class="radius-range">

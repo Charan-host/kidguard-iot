@@ -6,12 +6,14 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", true);
 app.use(cors());
 app.use(express.json());
 
 const PORT = Number(process.env.PORT || 3000);
 const MQTT_URL = process.env.MQTT_URL || "mqtt://localhost:1883";
 const MQTT_TOPIC_PREFIX = process.env.MQTT_TOPIC_PREFIX || "kidguard";
+const DEFAULT_DEVICE_ID = process.env.DEFAULT_DEVICE_ID || "KB-2024-0123";
 
 const devices = new Map();
 
@@ -45,11 +47,23 @@ function defaultDeviceState(deviceId) {
       childName: "Emma Wilson",
       deviceId,
       safeZoneRadius: 100,
+      safeZoneLat: 37.7749,
+      safeZoneLng: -122.4194,
       sosAlerts: true,
       geofencingAlerts: true,
       batteryAlerts: true,
       nightMode: false
     },
+    geofence: {
+      lat: 37.7749,
+      lng: -122.4194,
+      radius: 100,
+      isConfigured: false
+    },
+    parentAlertPending: false,
+    parentAlertMessage: "Parent requested check-in",
+    lastEmergencyEventType: "",
+    lastEmergencyAtMs: 0,
     alerts: [],
     history: []
   };
@@ -93,6 +107,59 @@ function addAlert(device, alert) {
   }
 }
 
+function syncSettingsFromGeofence(device) {
+  device.settings.safeZoneRadius = device.geofence.radius;
+  device.settings.safeZoneLat = device.geofence.lat;
+  device.settings.safeZoneLng = device.geofence.lng;
+}
+
+function configureGeofence(device, lat, lng, radius, isConfigured) {
+  if (!Number.isNaN(lat)) {
+    device.geofence.lat = lat;
+  }
+  if (!Number.isNaN(lng)) {
+    device.geofence.lng = lng;
+  }
+  if (!Number.isNaN(radius)) {
+    device.geofence.radius = radius;
+  }
+  if (typeof isConfigured === "boolean") {
+    device.geofence.isConfigured = isConfigured;
+  }
+  syncSettingsFromGeofence(device);
+}
+
+function addCompatibilityEmergencyAlert(device, eventType) {
+  const normalizedType = String(eventType || "EMERGENCY").toUpperCase();
+  const nowMs = Date.now();
+  if (device.lastEmergencyEventType === normalizedType && nowMs - device.lastEmergencyAtMs < 60000) {
+    return;
+  }
+
+  const titles = {
+    EMERGENCY: "Emergency Mode Active",
+    SOS: "SOS Button Activated",
+    GEOFENCE: "Left Safe Zone",
+    FALL: "Fall Detected"
+  };
+
+  addAlert(device, {
+    title: titles[normalizedType] || "Emergency Alert",
+    message: `${device.location.address || "Unknown location"} • ${device.location.city || "Unknown city"}`,
+    status: "active",
+    lat: device.location.lat,
+    lng: device.location.lng
+  });
+
+  device.lastEmergencyEventType = normalizedType;
+  device.lastEmergencyAtMs = nowMs;
+}
+
+function getCompatDeviceId(req) {
+  const raw = req.query.deviceId || req.query.id || DEFAULT_DEVICE_ID;
+  return String(raw).trim() || DEFAULT_DEVICE_ID;
+}
+
 function applyTelemetry(deviceId, payload) {
   const device = getDevice(deviceId);
   const lat = Number(payload.lat);
@@ -103,6 +170,9 @@ function applyTelemetry(deviceId, payload) {
   if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
     device.location.lat = lat;
     device.location.lng = lng;
+    if (!device.geofence.isConfigured) {
+      configureGeofence(device, lat, lng, device.geofence.radius, false);
+    }
   }
   if (typeof payload.address === "string") {
     device.location.address = payload.address;
@@ -185,6 +255,74 @@ app.get("/api/health", (_req, res) => {
   res.json({ ok: true, uptime: process.uptime() });
 });
 
+app.get("/update.php", (req, res) => {
+  const deviceId = getCompatDeviceId(req);
+  const eventType = String(req.query.event || "NORMAL").trim().toUpperCase();
+  const lat = Number(req.query.lat);
+  const lng = Number(req.query.lng);
+  const batteryPct = Number(req.query.batteryPct);
+  const distanceKm = Number(req.query.distanceKm);
+  const statusType = eventType === "NORMAL" ? "safe" : "danger";
+  const statusText = eventType === "NORMAL" ? "Safe" : eventType.replace(/_/g, " ");
+
+  applyTelemetry(deviceId, {
+    lat,
+    lng,
+    batteryPct,
+    distanceKm,
+    childName: req.query.childName,
+    address: req.query.address,
+    city: req.query.city,
+    locationLabel: req.query.label || req.query.locationLabel || "Tracked Location",
+    statusType,
+    statusText
+  });
+
+  if (eventType !== "NORMAL") {
+    const device = getDevice(deviceId);
+    addCompatibilityEmergencyAlert(device, eventType);
+  }
+
+  res.type("text/plain").send("OK");
+});
+
+app.get("/getGeofence.php", (req, res) => {
+  const device = getDevice(getCompatDeviceId(req));
+  const lat = Number(device.geofence.lat || 0).toFixed(6);
+  const lng = Number(device.geofence.lng || 0).toFixed(6);
+  const radius = Number(device.geofence.radius || 100).toFixed(0);
+  res.type("text/plain").send(`LAT=${lat}\nLNG=${lng}\nRADIUS=${radius}`);
+});
+
+app.get("/setGeofence.php", (req, res) => {
+  const device = getDevice(getCompatDeviceId(req));
+  configureGeofence(
+    device,
+    Number(req.query.lat),
+    Number(req.query.lng),
+    Number(req.query.radius),
+    true
+  );
+  res.type("text/plain").send("OK");
+});
+
+app.get("/getAlert.php", (req, res) => {
+  const device = getDevice(getCompatDeviceId(req));
+  const shouldAlert = device.parentAlertPending ? "1" : "0";
+  device.parentAlertPending = false;
+  res.type("text/plain").send(`ALERT=${shouldAlert}`);
+});
+
+app.get("/triggerAlert.php", (req, res) => {
+  const device = getDevice(getCompatDeviceId(req));
+  const value = String(req.query.value || "1");
+  device.parentAlertPending = value === "1";
+  if (typeof req.query.message === "string" && req.query.message.trim()) {
+    device.parentAlertMessage = req.query.message.trim();
+  }
+  res.type("text/plain").send(`ALERT=${device.parentAlertPending ? "1" : "0"}`);
+});
+
 app.get("/api/devices/:deviceId/state", (req, res) => {
   const device = getDevice(req.params.deviceId);
   res.json({
@@ -223,6 +361,7 @@ app.get("/api/devices/:deviceId/history", (req, res) => {
 
 app.get("/api/devices/:deviceId/settings", (req, res) => {
   const device = getDevice(req.params.deviceId);
+  syncSettingsFromGeofence(device);
   res.json(device.settings);
 });
 
@@ -238,6 +377,13 @@ app.put("/api/devices/:deviceId/settings", (req, res) => {
   if (typeof body.childName === "string" && body.childName.trim()) {
     device.childName = body.childName.trim();
   }
+  configureGeofence(
+    device,
+    Number(body.safeZoneLat),
+    Number(body.safeZoneLng),
+    Number(body.safeZoneRadius),
+    !Number.isNaN(Number(body.safeZoneLat)) && !Number.isNaN(Number(body.safeZoneLng))
+  );
   res.json({ ok: true });
 });
 

@@ -18,11 +18,28 @@
         toggle.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
+    function updateApiLink(url) {
+        const link = document.getElementById('apiBaseUrlLink');
+        if (!link) return;
+
+        const safeUrl = (url || '').trim();
+        if (!safeUrl) {
+            link.removeAttribute('href');
+            link.textContent = 'Add IoT API URL';
+            return;
+        }
+
+        link.href = safeUrl;
+        link.textContent = safeUrl;
+    }
+
     function readForm() {
         return {
             childName: document.getElementById('childNameInput').value.trim(),
             deviceId: document.getElementById('deviceIdInput').value.trim(),
             apiBaseUrl: document.getElementById('apiBaseUrlInput').value.trim(),
+            safeZoneLat: Number(document.getElementById('safeZoneLatInput').value),
+            safeZoneLng: Number(document.getElementById('safeZoneLngInput').value),
             safeZoneRadius: Number(document.getElementById('safeZoneRadiusInput').value),
             sosAlerts: document.getElementById('sosAlertsInput').checked,
             geofencingAlerts: document.getElementById('geofencingAlertsInput').checked,
@@ -35,7 +52,10 @@
         document.getElementById('childNameInput').value = settings.childName || '';
         document.getElementById('deviceIdInput').value = settings.deviceId || '';
         document.getElementById('apiBaseUrlInput').value = cfg.getApiBaseUrl();
-        document.getElementById('safeZoneRadiusInput').value = settings.safeZoneRadius || 100;
+        updateApiLink(cfg.getApiBaseUrl());
+        document.getElementById('safeZoneLatInput').value = settings.safeZoneLat ?? 37.7749;
+        document.getElementById('safeZoneLngInput').value = settings.safeZoneLng ?? -122.4194;
+        document.getElementById('safeZoneRadiusInput').value = settings.safeZoneRadius ?? 100;
         document.getElementById('sosAlertsInput').checked = Boolean(settings.sosAlerts);
         document.getElementById('geofencingAlertsInput').checked = Boolean(settings.geofencingAlerts);
         document.getElementById('batteryAlertsInput').checked = Boolean(settings.batteryAlerts);
@@ -82,6 +102,8 @@
         writeForm({
             childName: 'Emma Wilson',
             deviceId: iot.getDeviceId(),
+            safeZoneLat: 37.7749,
+            safeZoneLng: -122.4194,
             safeZoneRadius: 100,
             sosAlerts: true,
             geofencingAlerts: true,
@@ -89,10 +111,17 @@
             nightMode: false
         });
         document.getElementById('apiBaseUrlInput').value = cfg.defaults.apiBaseUrl;
+        updateApiLink(cfg.defaults.apiBaseUrl);
         setStatus('Defaults loaded. Click Save Settings to sync.', false);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+        const apiBaseUrlInput = document.getElementById('apiBaseUrlInput');
+        updateApiLink(apiBaseUrlInput.value);
+        apiBaseUrlInput.addEventListener('input', (event) => {
+            updateApiLink(event.target.value);
+        });
+
         document.getElementById('saveSettingsBtn').addEventListener('click', () => {
             saveCurrentSettings().catch((error) => {
                 console.error('Save failed:', error);
