@@ -300,16 +300,17 @@ void sendLocationUpdate(const String& event, bool forceSend) {
   unsigned long interval = emergencyMode ? emergencyInterval : normalInterval;
   if (!forceSend && millis() - lastUpdate < interval) return;
 
+  bool includeLocation = event != "SOS";
   String path = String(updatePath) +
     "?deviceId=" + deviceId +
     "&childName=" + encodeSpaces(childName) +
     "&label=UNO%20R4%20Tracker" +
     "&event=" + event;
 
-  if (gps.location.isValid()) {
+  if (includeLocation && gps.location.isValid()) {
     path += "&lat=" + String(gps.location.lat(), 6);
     path += "&lng=" + String(gps.location.lng(), 6);
-  } else if (hasLastKnownLocation) {
+  } else if (includeLocation && hasLastKnownLocation) {
     path += "&lat=" + String(lastKnownLat, 6);
     path += "&lng=" + String(lastKnownLng, 6);
   }

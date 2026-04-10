@@ -19,6 +19,12 @@
         return status === 'active' ? 'alert-item is-active' : 'alert-item';
     }
 
+    function hasLocation(alert) {
+        const lat = Number(alert?.lat);
+        const lng = Number(alert?.lng);
+        return !Number.isNaN(lat) && !Number.isNaN(lng);
+    }
+
     function summary(alerts) {
         const active = alerts.filter((a) => a.status === 'active').length;
         const total = alerts.length;
@@ -39,13 +45,15 @@
 
         container.innerHTML = alerts.map((alert) => {
             const canResolve = alert.status === 'active';
+            const infoParts = [alert.message, alert.time || ''].filter(Boolean);
+            const canViewLocation = hasLocation(alert);
             return `
             <div class="${itemClass(alert.status)}">
                 <div>
                     <div class="alert-title">${alert.title}</div>
-                    <div class="alert-info">${alert.message} • ${alert.time || ''}</div>
+                    <div class="alert-info">${infoParts.join(' - ') || 'No details available'}</div>
                     <div class="alert-actions">
-                        <button class="alert-btn primary" data-lat="${alert.lat || ''}" data-lng="${alert.lng || ''}" data-title="${alert.title}">View Location</button>
+                        ${canViewLocation ? `<button class="alert-btn primary" data-lat="${alert.lat}" data-lng="${alert.lng}" data-title="${alert.title}">View Location</button>` : ''}
                         ${canResolve ? `<button class="alert-btn" data-resolve="${alert.id}">Mark as Resolved</button>` : ''}
                     </div>
                 </div>

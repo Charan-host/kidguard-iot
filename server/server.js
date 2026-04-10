@@ -97,10 +97,16 @@ function addAlert(device, alert) {
     title: alert.title || "Alert",
     message: alert.message || "",
     time: alert.time || nowTimeLabel(),
-    status: alert.status === "resolved" ? "resolved" : "active",
-    lat: Number(alert.lat || device.location.lat || 0),
-    lng: Number(alert.lng || device.location.lng || 0)
+    status: alert.status === "resolved" ? "resolved" : "active"
   };
+
+  const lat = Number(alert.lat);
+  const lng = Number(alert.lng);
+  if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+    item.lat = lat;
+    item.lng = lng;
+  }
+
   device.alerts.unshift(item);
   if (device.alerts.length > 200) {
     device.alerts.length = 200;
@@ -142,6 +148,18 @@ function addCompatibilityEmergencyAlert(device, eventType) {
     GEOFENCE: "Left Safe Zone",
     FALL: "Fall Detected"
   };
+
+  if (normalizedType === "SOS") {
+    addAlert(device, {
+      title: titles[normalizedType],
+      message: "SOS button pressed",
+      status: "active"
+    });
+
+    device.lastEmergencyEventType = normalizedType;
+    device.lastEmergencyAtMs = nowMs;
+    return;
+  }
 
   addAlert(device, {
     title: titles[normalizedType] || "Emergency Alert",
