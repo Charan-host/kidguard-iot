@@ -53,8 +53,8 @@
         document.getElementById('deviceIdInput').value = settings.deviceId || '';
         document.getElementById('apiBaseUrlInput').value = cfg.getApiBaseUrl();
         updateApiLink(cfg.getApiBaseUrl());
-        document.getElementById('safeZoneLatInput').value = settings.safeZoneLat ?? 37.7749;
-        document.getElementById('safeZoneLngInput').value = settings.safeZoneLng ?? -122.4194;
+        document.getElementById('safeZoneLatInput').value = settings.safeZoneLat ?? 10.938;
+        document.getElementById('safeZoneLngInput').value = settings.safeZoneLng ?? 76.7449;
         document.getElementById('safeZoneRadiusInput').value = settings.safeZoneRadius ?? 100;
         document.getElementById('sosAlertsInput').checked = Boolean(settings.sosAlerts);
         document.getElementById('geofencingAlertsInput').checked = Boolean(settings.geofencingAlerts);
@@ -102,8 +102,8 @@
         writeForm({
             childName: 'Emma Wilson',
             deviceId: iot.getDeviceId(),
-            safeZoneLat: 37.7749,
-            safeZoneLng: -122.4194,
+            safeZoneLat: 10.938,
+            safeZoneLng: 76.7449,
             safeZoneRadius: 100,
             sosAlerts: true,
             geofencingAlerts: true,

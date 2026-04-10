@@ -11,9 +11,9 @@ copy .env.example .env
 npm start
 ```
 
-Server API base URL: `http://localhost:3000/api`
+Server API base URL for local development: `http://localhost:3000/api`
 
-Set this same URL in website `Device Settings -> IoT API Base URL`.
+When the frontend is deployed, set `Device Settings -> IoT API Base URL` to your live backend URL instead of `localhost`.
 
 ## 2. MQTT topics from device
 

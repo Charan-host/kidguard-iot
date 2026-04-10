@@ -1,6 +1,6 @@
 ﻿# KidGuard IoT API Contract
 
-Frontend expects these REST endpoints under `API_BASE_URL` (default: `http://localhost:3000/api`).
+Frontend expects these REST endpoints under `API_BASE_URL` (default: `https://kidguard-backend.onrender.com/api`).
 
 - `GET /devices/:deviceId/state`
   - Returns:

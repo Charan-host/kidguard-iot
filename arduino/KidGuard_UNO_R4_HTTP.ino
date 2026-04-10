@@ -50,9 +50,14 @@ const float fallThreshold = 3.0 * 9.81;
 double safeLat = 0;
 double safeLng = 0;
 double radius = 100;
+double lastKnownLat = 0;
+double lastKnownLng = 0;
+bool hasLastKnownLocation = false;
 
 // ---------------- TIMING ----------------
 bool emergencyMode = false;
+String emergencyEvent = "EMERGENCY";
+bool lastSOSPressed = false;
 unsigned long emergencyStart = 0;
 unsigned long lastUpdate = 0;
 unsigned long lastRemoteCheck = 0;
@@ -84,6 +89,12 @@ void setup() {
 void loop() {
   while (gpsSerial.available()) {
     gps.encode(gpsSerial.read());
+  }
+
+  if (gps.location.isValid()) {
+    lastKnownLat = gps.location.lat();
+    lastKnownLng = gps.location.lng();
+    hasLastKnownLocation = true;
   }
 
   checkSOS();
@@ -167,6 +178,16 @@ String readField(const String& text, const String& key) {
   return value;
 }
 
+void enterEmergency(const String& eventName, bool sendNow) {
+  emergencyMode = true;
+  emergencyEvent = eventName;
+  emergencyStart = millis();
+
+  if (sendNow) {
+    sendLocationUpdate(eventName, true);
+  }
+}
+
 // ---------------- MPU CALIBRATION ----------------
 void calibrateMPU() {
   long ax_sum = 0;
@@ -188,11 +209,12 @@ void calibrateMPU() {
 
 // ---------------- SOS ----------------
 void checkSOS() {
-  if (digitalRead(SOS_BUTTON) == LOW) {
+  bool pressed = digitalRead(SOS_BUTTON) == LOW;
+  if (pressed && !lastSOSPressed) {
     activateMotor();
-    emergencyMode = true;
-    emergencyStart = millis();
+    enterEmergency("SOS", true);
   }
+  lastSOSPressed = pressed;
 }
 
 // ---------------- MOTION ----------------
@@ -212,8 +234,7 @@ void detectMotion() {
 
   if (shakeCount >= 3 || mag > fallThreshold) {
     activateMotor();
-    emergencyMode = true;
-    emergencyStart = millis();
+    enterEmergency("FALL", true);
     shakeCount = 0;
   }
 }
@@ -239,8 +260,7 @@ void checkGeofence() {
   double d = distanceMeters(gps.location.lat(), gps.location.lng(), safeLat, safeLng);
   if (d > radius) {
     vibrateSingle();
-    emergencyMode = true;
-    emergencyStart = millis();
+    enterEmergency("GEOFENCE", true);
   }
 }
 
@@ -271,27 +291,28 @@ void checkParentAlert() {
 
   if (resp.indexOf("ALERT=1") >= 0) {
     vibrateAlert();
-    emergencyMode = true;
-    emergencyStart = millis();
+    enterEmergency("EMERGENCY", true);
   }
 }
 
 // ---------------- UPDATE ----------------
-void updateLocation() {
+void sendLocationUpdate(const String& event, bool forceSend) {
   unsigned long interval = emergencyMode ? emergencyInterval : normalInterval;
-  if (millis() - lastUpdate < interval) return;
-
-  String lat = String(gps.location.lat(), 6);
-  String lng = String(gps.location.lng(), 6);
-  String event = emergencyMode ? "EMERGENCY" : "NORMAL";
+  if (!forceSend && millis() - lastUpdate < interval) return;
 
   String path = String(updatePath) +
     "?deviceId=" + deviceId +
     "&childName=" + encodeSpaces(childName) +
-    "&lat=" + lat +
-    "&lng=" + lng +
     "&label=UNO%20R4%20Tracker" +
     "&event=" + event;
+
+  if (gps.location.isValid()) {
+    path += "&lat=" + String(gps.location.lat(), 6);
+    path += "&lng=" + String(gps.location.lng(), 6);
+  } else if (hasLastKnownLocation) {
+    path += "&lat=" + String(lastKnownLat, 6);
+    path += "&lng=" + String(lastKnownLng, 6);
+  }
 
   String resp;
   httpGET(path, resp);
@@ -299,10 +320,16 @@ void updateLocation() {
   lastUpdate = millis();
 }
 
+void updateLocation() {
+  String event = emergencyMode ? emergencyEvent : "NORMAL";
+  sendLocationUpdate(event, false);
+}
+
 // ---------------- EMERGENCY RESET ----------------
 void manageEmergency() {
   if (emergencyMode && millis() - emergencyStart > emergencyTimeout) {
     emergencyMode = false;
+    emergencyEvent = "EMERGENCY";
   }
 }
 

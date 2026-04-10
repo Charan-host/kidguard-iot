@@ -37,26 +37,26 @@ function defaultDeviceState(deviceId) {
     statusType: "safe",
     distanceKm: 2.3,
     location: {
-      lat: 37.7749,
-      lng: -122.4194,
-      address: "Unknown Address",
-      city: "Unknown City"
+      lat: 10.938,
+      lng: 76.7449,
+      address: "Karunya Institute of Technology and Sciences, Karunya Nagar",
+      city: "Coimbatore, Tamil Nadu"
     },
     updatedAt: nowTimeLabel(),
     settings: {
       childName: "Emma Wilson",
       deviceId,
       safeZoneRadius: 100,
-      safeZoneLat: 37.7749,
-      safeZoneLng: -122.4194,
+      safeZoneLat: 10.938,
+      safeZoneLng: 76.7449,
       sosAlerts: true,
       geofencingAlerts: true,
       batteryAlerts: true,
       nightMode: false
     },
     geofence: {
-      lat: 37.7749,
-      lng: -122.4194,
+      lat: 10.938,
+      lng: 76.7449,
       radius: 100,
       isConfigured: false
     },

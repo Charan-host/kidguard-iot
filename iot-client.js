@@ -73,10 +73,10 @@
             statusType: "safe",
             distanceKm: 2.3,
             location: {
-                lat: 37.7749,
-                lng: -122.4194,
-                address: "123 Main St",
-                city: "Springfield, MA"
+                lat: 10.938,
+                lng: 76.7449,
+                address: "Karunya Institute of Technology and Sciences, Karunya Nagar",
+                city: "Coimbatore, Tamil Nadu"
             },
             updatedAt: nowTimeLabel()
         };
@@ -84,17 +84,17 @@
 
     function demoAlerts() {
         return [
-            { id: "a1", title: "SOS Button Activated", message: "456 Park Avenue, Springfield", time: "10:45 AM", status: "active", type: "sos", lat: 37.779, lng: -122.41 },
-            { id: "a2", title: "Left Safe Zone", message: "Moving towards downtown", time: "9:30 AM", status: "resolved", type: "geofence", lat: 37.77, lng: -122.43 },
-            { id: "a3", title: "Device connected", message: "Band connected to gateway", time: "9:15 AM", status: "resolved", type: "device", lat: 37.7749, lng: -122.4194 }
+            { id: "a1", title: "SOS Button Activated", message: "Near Karunya Main Gate, Coimbatore", time: "10:45 AM", status: "active", type: "sos", lat: 10.9386, lng: 76.7456 },
+            { id: "a2", title: "Left Safe Zone", message: "Moved outside Karunya Nagar safe zone", time: "9:30 AM", status: "resolved", type: "geofence", lat: 10.9368, lng: 76.7481 },
+            { id: "a3", title: "Device connected", message: "Band connected from Karunya campus", time: "9:15 AM", status: "resolved", type: "device", lat: 10.938, lng: 76.7449 }
         ];
     }
 
     function demoHistory() {
         return [
-            { id: "h1", title: "Home", address: "123 Main Street, Springfield", timeLabel: "6:30 PM • Today • 3 hours", lat: 37.7749, lng: -122.4194 },
-            { id: "h2", title: "School", address: "456 Education Ave, Springfield", timeLabel: "2:45 PM • Today • 6 hours", lat: 37.779, lng: -122.41 },
-            { id: "h3", title: "Park", address: "789 Green Park, Springfield", timeLabel: "4:15 PM • Yesterday • 1.5 hours", lat: 37.768, lng: -122.427 }
+            { id: "h1", title: "Karunya Campus", address: "Karunya Institute of Technology and Sciences, Karunya Nagar", timeLabel: "6:30 PM • Today • 3 hours", lat: 10.938, lng: 76.7449 },
+            { id: "h2", title: "Academic Block", address: "Karunya Nagar, Coimbatore - 641114", timeLabel: "2:45 PM • Today • 6 hours", lat: 10.9393, lng: 76.7466 },
+            { id: "h3", title: "Main Entrance", address: "Karunya Institute of Technology and Sciences, Coimbatore", timeLabel: "4:15 PM • Yesterday • 1.5 hours", lat: 10.9368, lng: 76.7481 }
         ];
     }
 
@@ -109,8 +109,8 @@
         return {
             childName: "Emma Wilson",
             deviceId: getDeviceId(),
-            safeZoneLat: 37.7749,
-            safeZoneLng: -122.4194,
+            safeZoneLat: 10.938,
+            safeZoneLng: 76.7449,
             safeZoneRadius: 100,
             sosAlerts: true,
             geofencingAlerts: true,
